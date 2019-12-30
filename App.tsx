@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  FlatList,
+  SafeAreaView
+} from "react-native";
 import * as Speech from "expo-speech";
 import cards from "./data/card.json";
 
@@ -19,10 +26,16 @@ const getRandomInt = (max: number): number => {
 const App = () => {
   const [leftCards, setLeftCards] = useState<Array<string>>(cards);
   const [finishedCards, setFinishedCards] = useState<Array<string>>([]);
+  const [currentCard, setCurrentCard] = useState();
 
   const speechCard = () => {
+    if (currentCard) {
+      setFinishedCards([...finishedCards, currentCard]);
+    }
+
     const rand = getRandomInt(leftCards.length);
     const card = leftCards[rand];
+    setCurrentCard(card);
     console.log(rand, card);
     //Speech.speak(card, { language: "JA-jp" });
 
@@ -31,7 +44,6 @@ const App = () => {
         return index !== rand;
       })
     );
-    setFinishedCards([...finishedCards, card]);
   };
 
   const reset = () => {
@@ -39,13 +51,18 @@ const App = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Button onPress={speechCard} title="つぎへ" />
+    <SafeAreaView style={styles.container}>
       <Text>
         {leftCards.length}/{cards.length}
       </Text>
+      <FlatList
+        data={finishedCards}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <Text>{item}</Text>}
+      />
+      <Button onPress={speechCard} title="つぎへ" />
       <Button onPress={reset} title="リセット" />
-    </View>
+    </SafeAreaView>
   );
 };
 
