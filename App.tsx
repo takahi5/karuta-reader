@@ -1,21 +1,16 @@
 import React, { useState, useRef } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  FlatList,
-  SafeAreaView
-} from "react-native";
+import { StyleSheet, FlatList, SafeAreaView } from "react-native";
 import * as Speech from "expo-speech";
 import cards from "./data/card.json";
+import Header from "./components/Header";
+import PlayButton from "./components/PlayButton";
+import ResetButton from "./components/ResetButton";
+import ListItem from "./components/ListItem";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    backgroundColor: "#fff"
   }
 });
 
@@ -26,8 +21,8 @@ const getRandomInt = (max: number): number => {
 const App = () => {
   const [leftCards, setLeftCards] = useState<Array<string>>(cards);
   const [finishedCards, setFinishedCards] = useState<Array<string>>([]);
-  const currentCardRef = useRef("");
-  const timerRef = useRef();
+  const currentCardRef = useRef<string>("");
+  const timerRef = useRef<number>();
 
   const repeat = () => {
     console.log(currentCardRef.current);
@@ -38,7 +33,7 @@ const App = () => {
   const speechCard = () => {
     clearTimeout(timerRef.current);
     if (currentCardRef.current) {
-      setFinishedCards([...finishedCards, currentCardRef.current]);
+      setFinishedCards([currentCardRef.current, ...finishedCards]);
     }
 
     const rand = getRandomInt(leftCards.length);
@@ -58,20 +53,19 @@ const App = () => {
   const reset = () => {
     clearTimeout(timerRef.current);
     setLeftCards(cards);
+    setFinishedCards([]);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>
-        {leftCards.length}/{cards.length}
-      </Text>
+      <Header title={`${leftCards.length}/${cards.length}`} />
       <FlatList
         data={finishedCards}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Text>{item}</Text>}
+        renderItem={({ item }) => <ListItem text={item} />}
       />
-      <Button onPress={speechCard} title="つぎへ" />
-      <Button onPress={reset} title="リセット" />
+      <PlayButton onPress={speechCard} />
+      <ResetButton onPress={reset} />
     </SafeAreaView>
   );
 };
