@@ -12,17 +12,39 @@ const styles = StyleSheet.create({
   }
 });
 
+const getRandomInt = (max: number): number => {
+  return Math.floor(Math.random() * Math.floor(max));
+};
+
 const App = () => {
-  const [leftCards] = useState<Array<string>>(cards);
+  const [leftCards, setLeftCards] = useState<Array<string>>(cards);
+  const [finishedCards, setFinishedCards] = useState<Array<string>>([]);
 
   const speechCard = () => {
-    const card = leftCards[0];
-    Speech.speak(card, { language: "JA-jp" });
+    const rand = getRandomInt(leftCards.length);
+    const card = leftCards[rand];
+    console.log(rand, card);
+    //Speech.speak(card, { language: "JA-jp" });
+
+    setLeftCards(
+      leftCards.filter((card, index) => {
+        return index !== rand;
+      })
+    );
+    setFinishedCards([...finishedCards, card]);
+  };
+
+  const reset = () => {
+    setLeftCards(cards);
   };
 
   return (
     <View style={styles.container}>
       <Button onPress={speechCard} title="つぎへ" />
+      <Text>
+        {leftCards.length}/{cards.length}
+      </Text>
+      <Button onPress={reset} title="リセット" />
     </View>
   );
 };
