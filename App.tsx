@@ -7,6 +7,8 @@ import PlayButton from "./components/PlayButton";
 import ResetButton from "./components/ResetButton";
 import ListItem from "./components/ListItem";
 
+const REPEAT_INTERVAL = 10000;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -25,9 +27,9 @@ const App = () => {
   const timerRef = useRef<number>();
 
   const repeat = () => {
-    console.log(currentCardRef.current);
-    //Speech.speak(card, { language: "JA-jp" });
-    timerRef.current = setTimeout(repeat, 3000);
+    //console.log(currentCardRef.current);
+    Speech.speak(currentCardRef.current, { language: "JA-jp" });
+    timerRef.current = setTimeout(repeat, REPEAT_INTERVAL);
   };
 
   const speechCard = () => {
@@ -39,21 +41,22 @@ const App = () => {
     const rand = getRandomInt(leftCards.length);
     const card = leftCards[rand];
     currentCardRef.current = card;
-    //Speech.speak(card, { language: "JA-jp" });
-    console.log(rand, card);
+    //console.log(rand, card);
+    Speech.speak(card, { language: "JA-jp" });
 
     setLeftCards(
       leftCards.filter((card, index) => {
         return index !== rand;
       })
     );
-    timerRef.current = setTimeout(repeat, 10000);
+    timerRef.current = setTimeout(repeat, REPEAT_INTERVAL);
   };
 
   const reset = () => {
     clearTimeout(timerRef.current);
     setLeftCards(cards);
     setFinishedCards([]);
+    currentCardRef.current = "";
   };
 
   return (
