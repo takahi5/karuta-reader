@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { StyleSheet, FlatList, SafeAreaView } from "react-native";
+import { StyleSheet, FlatList, SafeAreaView, Alert } from "react-native";
 import * as Speech from "expo-speech";
 import cards from "./data/card.json";
 import Header from "./components/Header";
@@ -32,7 +32,14 @@ const App = () => {
     timerRef.current = setTimeout(repeat, REPEAT_INTERVAL);
   };
 
-  const speechCard = () => {
+  const reset = () => {
+    clearTimeout(timerRef.current);
+    setLeftCards(cards);
+    setFinishedCards([]);
+    currentCardRef.current = "";
+  };
+
+  const onPressNext = () => {
     clearTimeout(timerRef.current);
     if (currentCardRef.current) {
       setFinishedCards([currentCardRef.current, ...finishedCards]);
@@ -52,11 +59,16 @@ const App = () => {
     timerRef.current = setTimeout(repeat, REPEAT_INTERVAL);
   };
 
-  const reset = () => {
-    clearTimeout(timerRef.current);
-    setLeftCards(cards);
-    setFinishedCards([]);
-    currentCardRef.current = "";
+  const onPressReset = () => {
+    Alert.alert(
+      "リセット",
+      "リセットしますか?",
+      [
+        { text: "キャンセル", style: "cancel" },
+        { text: "OK", onPress: () => reset() }
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -67,8 +79,8 @@ const App = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => <ListItem text={item} />}
       />
-      <PlayButton onPress={speechCard} />
-      <ResetButton onPress={reset} />
+      <PlayButton onPress={onPressNext} />
+      <ResetButton onPress={onPressReset} />
     </SafeAreaView>
   );
 };
