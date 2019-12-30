@@ -49,6 +49,9 @@ const App = () => {
     if (currentCardRef.current) {
       setFinishedCards([currentCardRef.current, ...finishedCards]);
     }
+    if (finishedCards.length === cards.length) {
+      return;
+    }
 
     const rand = getRandomInt(leftCards.length);
     const card = leftCards[rand];
@@ -77,7 +80,7 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={`${leftCards.length}/${cards.length}`} />
+      <Header title={`${finishedCards.length}/${cards.length}`} />
       <FlatList
         data={finishedCards}
         keyExtractor={(item, index) => index.toString()}
