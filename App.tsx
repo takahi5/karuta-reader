@@ -8,6 +8,7 @@ import ResetButton from "./components/ResetButton";
 import ListItem from "./components/ListItem";
 
 const REPEAT_INTERVAL = 10000;
+const DELAY = 1000;
 
 const styles = StyleSheet.create({
   container: {
@@ -26,9 +27,13 @@ const App = () => {
   const currentCardRef = useRef<string>("");
   const timerRef = useRef<number>();
 
-  const repeat = () => {
+  const speak = () => {
     //console.log(currentCardRef.current);
     Speech.speak(currentCardRef.current, { language: "JA-jp" });
+  };
+
+  const repeat = () => {
+    speak();
     timerRef.current = setTimeout(repeat, REPEAT_INTERVAL);
   };
 
@@ -48,8 +53,7 @@ const App = () => {
     const rand = getRandomInt(leftCards.length);
     const card = leftCards[rand];
     currentCardRef.current = card;
-    //console.log(rand, card);
-    Speech.speak(card, { language: "JA-jp" });
+    setTimeout(speak, DELAY);
 
     setLeftCards(
       leftCards.filter((card, index) => {
